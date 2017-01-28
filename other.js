@@ -1,32 +1,31 @@
-
 //---------------------------------------------------------------------------------
+//ここでeventを追加するよ
 function addEvent(){
   var ctx = document.getElementById("canv").getContext('2d');       //ctx = カンバスをさすようにするお
-  canv.addEventListener('click',getSelectedCell);
+  canv.addEventListener('click',clicked);
 }
 //---------------------------------------------------------------------------------
 //選択されたセルを boardState.selectedCell に反映するよ
-function getSelectedCell(e){
+function clicked(e){
     var canvasRect = canv.getBoundingClientRect();                    //カンバスが表示される位置を取得するお
     var cellX = (e.clientX - canvasRect.left)/BOARD_DEFINE.cellSize |0;
     var cellY = (e.clientY - canvasRect.top) /BOARD_DEFINE.cellSize |0;
     var cellNo = (cellX+1) + (cellY+1)*10;
     var CanPut = false;
-
     boardState.selectedCell = cellNo;
 
-    if (JudgeCanPut()){
+    if (JudgeCanPut()){   //石を置くことができるマスなら、"石を奥""裏返す""描写する"
       reverse();
       putStone();
       render();
     }
     else {
-      alert ("you can not put there");
+      alert ("you can not put there"); // 石置けない場所ならエラーメッセージ表示
     }
 }
 
 //---------------------------------------------------------------------------------
-
+//置かれた石を反映するよ
 function putStone(){
   boardState.map[boardState.selectedCell] = boardState.turn;
   boardState.revision++;
@@ -35,11 +34,3 @@ function putStone(){
 }
 
 //---------------------------------------------------------------------------------
-
-
-//---------------------------------------------------------------------------------
-
-(function mainProcess(){
-  render();
-  addEvent();
-})();

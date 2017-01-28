@@ -2,18 +2,14 @@ function JudgeCanPut(){
   var turn = boardState.turn;
   var selectedCell = boardState.selectedCell;
   var targetCell = boardState.selectedCell;
-
   var flag1;
   var flag2;
   var me = turn;
   var enemy;
-
   if(turn == 1){enemy = -1;}
   if(turn == -1){enemy = 1;}
 
-
   //置こうとしている所に石が存在しているかどうか
-
   flag1 = (function check1(){
     if (boardState.map[selectedCell] != 0){
       return false;
@@ -34,10 +30,10 @@ function JudgeCanPut(){
       //ここからしたは、隣の石が敵の石だった場合。
       for(i = 0; i <= 10; i++){
         targetCell = targetCell + DIRECTION[iDir];
-        // 移動した先が、番兵だったら、falseを返す
+        // 移動した先が、番兵だったら、次の方向へ
         if(boardState.map[targetCell] == 5){
           break;}
-        // 移動した先が空白マスでも、falseを返す
+        // 移動した先が空白マスでも、次の方向へ
         if(boardState.map[targetCell] == 0){
           break;}
         // もし移動した先が、自分の石だった場合、trueを返す
@@ -46,10 +42,10 @@ function JudgeCanPut(){
         // もし移動した先が、敵の石だった場合、なにもしない。ループを続ける。
       }
     }
-    //念のためfalse
     return false;
   })();
 
+  //二つのバリデーションどっちもパスした場合のみ、Trueを返す
   if (flag1 == true && flag2 == true){return true}
   else {return false;}
 }

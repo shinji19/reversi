@@ -1,14 +1,11 @@
 function reverse(){
-  var boardState_cache = $.extend(true, {}, boardState);
-  var turn = boardState.turn;
+  var boardState_cache;
   var selectedCell = boardState.selectedCell;
   var targetCell = boardState.selectedCell;
-  var flag1;
-  var flag2;
-  var me = turn;
+  var me = boardState.turn;
   var enemy;
-  if(turn == 1){enemy = -1;}
-  if(turn == -1){enemy = 1;}
+  if(me == 1){enemy = -1;}
+  if(me == -1){enemy = 1;}
 
   for(var iDir = 0; iDir <= 7; iDir++){ //全方向にむけてやります
     targetCell = selectedCell;            //初期化
