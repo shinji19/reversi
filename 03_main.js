@@ -15,11 +15,14 @@ function getSelectedCell(e){
 
     boardState.selectedCell = cellNo;
 
-//    if (JudgeCanPut()){
+    if (JudgeCanPut()){
       reverse();
       putStone();
       render();
-//    }
+    }
+    else {
+      alert ("you can not put there");
+    }
 }
 
 //---------------------------------------------------------------------------------
