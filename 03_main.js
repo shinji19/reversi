@@ -16,7 +16,6 @@ function getSelectedCell(e){
     boardState.selectedCell = cellNo;
 
     CanPut = JudgeCanPut();
-//    alert(CanPut);
     if (CanPut == true){
       putStone();
       render();
