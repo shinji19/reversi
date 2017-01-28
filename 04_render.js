@@ -20,28 +20,30 @@ function render(){
   (function drawStone(){
     var cellX;
     var cellY;
-    for (var i = 0;i <= 63; i++){
+    for (var i = 10;i <= 89; i++){
       if (boardState.map[i] != 1){continue;}
       ctx.fillStyle = COLOR_BLACK;
-      cellX = ((i%8|0)+0.5)*BOARD_DEFINE.cellSize;
-      cellY = ((i/8|0)+0.5)*BOARD_DEFINE.cellSize;
-      ctx.beginPath();
-      ctx.arc(cellX, cellY, STONE_RADIUS, 0,Math.PI*2,false);
-      ctx.closePath();
-      ctx.fill();
-    }
-    for (var i = 0;i <= 63; i++){
-      if (boardState.map[i] != -1){continue;}
-      ctx.fillStyle = COLOR_WHITE;
-      cellX = ((i%8|0)+0.5)*BOARD_DEFINE.cellSize;
-      cellY = ((i/8|0)+0.5)*BOARD_DEFINE.cellSize;
+      cellX = ((i%10 -0.5)*BOARD_DEFINE.cellSize);
+      cellY = (((i/10|0) - 0.5)*BOARD_DEFINE.cellSize);
+
       ctx.beginPath();
       ctx.arc(cellX, cellY, STONE_RADIUS, 0,Math.PI*2,false);
       ctx.closePath();
       ctx.fill();
     }
 
-  })();
+  for (var i = 10;i <= 89; i++){
+    if (boardState.map[i] != -1){continue;}
+    ctx.fillStyle = COLOR_WHITE;
+    cellX = ((i%10 -0.5)*BOARD_DEFINE.cellSize);
+    cellY = (((i/10|0) - 0.5)*BOARD_DEFINE.cellSize);
+
+    ctx.beginPath();
+    ctx.arc(cellX, cellY, STONE_RADIUS, 0,Math.PI*2,false);
+    ctx.closePath();
+    ctx.fill();
+  }
+})();
 
 
 }
