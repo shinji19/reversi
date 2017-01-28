@@ -20,7 +20,6 @@ function clicked(e){
       render();
     }
     else {
-      alert ("you can not put there"); // 石置けない場所ならエラーメッセージ表示
     }
 }
 
