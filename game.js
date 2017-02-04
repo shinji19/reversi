@@ -1,55 +1,146 @@
-function Render(){}
-//ボードのクラス定義
-function board(){
-  // 盤上の状態保持
-  var array = [
-    [0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0],
-  ];
-  //どっちのプレイヤーが次に打つか保持
-  var player = 1;
-  //getter
-  //this.getStone = function(y,x){ return array[y][x] };
-  this.getStone = function (){ return array; }
-  //setter
-  this.setStone = function(y,x,player){ array[y][x] = player; };
-  //初期化er
-  this.initState = function(){
-    this.setStone(3,3,-1);
-    this.setStone(2,2,-1);
-    this.setStone(2,3,1);
-    this.setStone(3,2,1);
+//------------------------------------------------------------------------------
+//ゲーム部分ー
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+//ボードの定義
+//------------------------------------------------------------------------------
+var board = {
+  array : [
+    [0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0],
+    [0,0,0,-1,1,0,0,0],
+    [0,0,0,1,-1,0,0,0],
+    [0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0],
+  ],
+  player : 1,
+  revision : 0
+}
+//------------------------------------------------------------------------------
+//ややこしいことやって見たけどプレイヤーの定義
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+//クラスの定義
+//------------------------------------------------------------------------------
+function player (){
+  arguments.callee.prototype.flag = function (){
+    switch (this){
+      case player.black : return 1;
+      case player.white : return -1;
+      case player.empty : return 0;
+    }
+  }
+  arguments.callee.prototype.colors = function (){
+    switch (this){
+      case player.black : return 'rgba(0, 0, 0, 1)';
+      case player.white : return 'rgba(256, 256, 256, 1)';
+      case player.empty : return 'rgba(0, 0, 0, 0)';
+    }
   }
 }
-//ボードのインスタンス化
-var board = new board();
+//------------------------------------------------------------------------------
+//インスタンス化 (ここの理屈がよくわからない)
+//なんで、↓のをやったあとだと、playerがコンストラクタとして使えなくなるの？
+//というか、そもそもなんで↓のができるの？
+//------------------------------------------------------------------------------
 
-board.initState();
-alert(board.getStone());
+player = {
+  black : new player(),
+  white : new player(),
+  empty : new player(),
+};
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//ここからRender部分
+//------------------------------------------------------------------------------
 
-// Function Render(){}
-// (function (){
-//   //変数定義
-//   var celllNo = 8;
-//   var Boardsize = {
-//     start : 0;
-//     end : 500;
-//   };
-//   var
-//   function clearCanv{　　　　　　　　　　  //オセロ盤描写を一度全部消す
-//     ctx.clearRect(0,0,500,500);
-//   }
-//
-//   function DrawLine(){
-//
-//   }
-//
-// })();
+function Render(){}
+(function (){
+  //------------------------------------------------------------------------------
+  //変数定義
+  //------------------------------------------------------------------------------
+  var ctx = document.getElementById("canv").getContext('2d');       //ctx = カンバスをさすようにするお
+  var canvasRect = canv.getBoundingClientRect();                    //カンバスが表示される位置を取得するお
+  var cellN = 8;
+  var BOARD_SIZE = {
+    START : 0,
+    END : 500,
+  };
+  var CELL_SIZE = BOARD_SIZE.END/cellN;
+  var COLOR_BLACK = "#000000";
+  var COLOR_WHITE = "#FFFFFF";
+  var COLOR_LINE = "#FFFFFF";
+
+  //------------------------------------------------------------------------------
+  //Render関数の中の関数をここで定義している
+  //----------------------------------------------------------------------------
+  //------------------------------------------------------------------------------
+  //canvansの描写を全部消す関数
+  //----------------------------------------------------------------------------
+  function clearCanv(){　　　　　　　　　　  //オセロ盤描写を一度全部消す
+    ctx.clearRect(BOARD_SIZE.START, BOARD_SIZE.START, BOARD_SIZE.END, BOARD_SIZE.END);
+  }
+  //------------------------------------------------------------------------------
+  //盤上の線を引く関数
+  //----------------------------------------------------------------------------
+  function DrawLine(){
+    ctx.beginPath();
+    for(var cnt = 0; cnt < cellN; cnt++){
+      ctx.moveTo(cnt*CELL_SIZE, BOARD_SIZE.START);  //縦線始点
+      ctx.lineTo(cnt*CELL_SIZE, BOARD_SIZE.END);    //縦線終点
+      ctx.moveTo(BOARD_SIZE.START, cnt*CELL_SIZE);  //横線始点
+      ctx.lineTo(BOARD_SIZE.END, cnt*CELL_SIZE);    //横線終点
+    }
+    ctx.closePath();
+    ctx.stroke();
+  }
+  //------------------------------------------------------------------------------
+  //石を置く関数 (どこに置くかは、arrayから引っ張ってくる)
+  //質問 : この109行面だと、関数呼び出したときのthisは　_player.empty.colorsになりそうだけど、
+  //　　　　なんでちゃんとした引数返すのだろう
+  //----------------------------------------------------------------------------
+  function DrawStone(_board,player){
+    var board = _board;                       //board.arrayをローカル関数"_array"に代入(ポインタ代入してるだけかも？)
+    var _player = player;                      //player.blackをローカル関数(ry
+    var STONE_RADIUS = (CELL_SIZE/2)-5;             //石の半径をここで計算
+    alert (_player.empty.colors());
+    //描写するよ！
+  //   for(var cntX = 0; cntX < cellN ; cntX++){
+  //     for(var cntY = 0; cntY < cellN ; cntY++){
+  //       switch ()
+  //       ctx.beginPath();
+  //       ctx.arc((cntX+0.5)*CELL_SIZE, (cntY+0.5)*CELL_SIZE, STONE_RADIUS, 0, Math.PI*2,false);
+  //       ctx.closePath();
+  //       ctx.fill();
+  //     }
+  //   }
+   }
+   function render(board,player){
+     clearCanv();
+     DrawLine();
+     DrawStone();
+  }
+
+
+  //----------------------------------------------------------------------------
+  //関数を、関数"Render"のメゾットとして外部に公開
+  //----------------------------------------------------------------------------
+  Render.clearCanv = clearCanv;
+  Render.DrawLine = DrawLine;
+  Render.DrawStone = DrawStone;
+  Render.render = render;
+  //----------------------------------------------------------------------------
+})();
+
+
+//------------------------------------------------------------------------------
+//動作確認するときはここに描こう
+//------------------------------------------------------------------------------
+
+ Render.clearCanv();
+ Render.DrawLine();
+ Render.DrawStone(board,player);
