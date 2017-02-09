@@ -11,10 +11,12 @@
   //------------------------------------------------------------------------------
   global.Render = Render;
   global.Render.render = render;
+  global.Render.clearCanv = clearCanv;
+  global.Render.DrawLine = DrawLine;
+  global.Render.DrawStone = DrawStone;
   //------------------------------------------------------------------------------
   //変数定義
   //------------------------------------------------------------------------------
-  var ctx = document.getElementById("canv").getContext('2d');       //ctx = カンバスをさすようにするお
   var COLOR_BLACK = "#000000";
   var COLOR_WHITE = "#FFFFFF";
   var COLOR_LINE = "#FFFFFF";
@@ -24,22 +26,27 @@
   //------------------------------------------------------------------------------
   //canvansの描写を全部消す関数
   //------------------------------------------------------------------------------
-  function clearCanv(_board_config){　　　　　　　　　　  //オセロ盤描写を一度全部消す
-    var board_config = _board_config;
-    ctx.clearRect(board_config.BOARD_SIZE.START, board_config.BOARD_SIZE.START, board_config.BOARD_SIZE.END, board_config.BOARD_SIZE.END);
+  function clearCanv(_ctx, _start, _end){　　　　　　　　　　  //ctx,オセロ盤の起点座標、オセロ盤の終点座標
+    var ctx = _ctx;
+    var start = _start;
+    var end = _end;
+    ctx.clearRect(start,start,end,end);
   }
   //------------------------------------------------------------------------------
   //盤上の線を引く関数
   //------------------------------------------------------------------------------
-  function DrawLine(_board_config){
-    var board_config = _board_config;
-    var CELL_SIZE = board_config.BOARD_SIZE.END/board_config.CELL_N;
+  function DrawLine(_ctx, _start, _end, _CELL_N, _CELL_SIZE){ //xtx,盤の起点、盤の終点、セルの数、セルのサイズ
+    var ctx = _ctx;
+    var start = _start;
+    var end = _end;
+    var CELL_N = _CELL_N;
+    var CELL_SIZE = _CELL_SIZE;
     ctx.beginPath();
-    for(var cnt = 0; cnt < board_config.CELL_N; cnt++){
-      ctx.moveTo(cnt*CELL_SIZE, board_config.BOARD_SIZE.START);  //縦線始点
-      ctx.lineTo(cnt*CELL_SIZE, board_config.BOARD_SIZE.END);    //縦線終点
-      ctx.moveTo(board_config.BOARD_SIZE.START, cnt*CELL_SIZE);  //横線始点
-      ctx.lineTo(board_config.BOARD_SIZE.END, cnt*CELL_SIZE);    //横線終点
+    for(var cnt = 0; cnt < CELL_N; cnt++){
+      ctx.moveTo(cnt*CELL_SIZE, start);  //縦線始点
+      ctx.lineTo(cnt*CELL_SIZE, end);    //縦線終点
+      ctx.moveTo(start, cnt*CELL_SIZE);  //横線始点
+      ctx.lineTo(end, cnt*CELL_SIZE);    //横線終点
     }
     ctx.closePath();
     ctx.stroke();
@@ -47,10 +54,12 @@
   //------------------------------------------------------------------------------
   //石を置く関数 (どこに置くかは、arrayから引っ張ってくる)
   //------------------------------------------------------------------------------
-  function DrawStone(_board,_player){
-    var board = _board;                       //board.arrayをローカル関数"_array"に代入(ポインタ代入してるだけかも？)
-    var player = _player;                      //player.blackをローカル関数(ry
-    var CELL_SIZE = board.BOARD_SIZE.END/board.CELL_N;
+  function DrawStone(_ctx, _array, _CELL_SIZE, _black, _white){ //ctx,オセロ配列、マスのサイズ、
+    var ctx = _ctx;
+    var array = _array;
+    var CELL_SIZE = _CELL_SIZE;
+    var black = _black;
+    var white = _white;
     var STONE_RADIUS = (CELL_SIZE/2)-5;             //石の半径をここで計算
     //描写するよ！
     for(var cntX = 0; cntX < board.CELL_N ; cntX++){
@@ -82,10 +91,10 @@
   //------------------------------------------------------------------------------
   //上記の関数をまとめて、いっぺんに呼び出す関数
   //------------------------------------------------------------------------------
-  function render(board_config,board,player){
-    clearCanv(board_config);
-    DrawLine(board_config);
-    DrawStone(board,player);
+  function render(ctx,board,player){
+    Render.clearCanv(ctx, board.BOARD_START, board.BOARD_END);
+    Render.DrawLine(ctx, board.BOARD_START, board.BOARD_END, board.CELL_N, board.CELL_SIZE);
+    Render.DrawStone(ctx, board.array, board.CELL_SIZE, player.black, player.white);
   }
   //----------------------------------------------------------------------------
 })((this || 0).self || global);
