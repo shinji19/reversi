@@ -1,220 +1,48 @@
-//------------------------------------------------------------------------------
-//ボードの定義
-//------------------------------------------------------------------------------
-var board_config = {
-  array      : [
-               [0,0,0,0,0,0,0,0],
-               [0,0,0,0,0,0,0,0],
-               [0,0,0,0,0,0,0,0],
-               [0,0,0,-1,1,0,0,0],
-               [0,0,0,1,-1,0,0,0],
-               [0,0,0,0,0,0,0,0],
-               [0,0,0,0,0,0,0,0],
-               [0,0,0,0,0,0,0,0],
-               ],
-  player     : 1,
-  revision   : 0,
-  BOARD_START : 0,
-  BOARD_END : 500,
-  CELL_N     : 8,
-  CELL_SIZE : 500/8
-}
-
-//------------------------------------------------------------------------------
-//ややこしいことやって見たけどプレイヤーの定義
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//プレイヤー定義 : クラスの定義
-//------------------------------------------------------------------------------
-function player (){
-  arguments.callee.prototype.flag = function (){
-    switch (this){
-      case player.black : return 1;
-      case player.white : return -1;
-      case player.empty : return 0;
-    }
-  }
-  arguments.callee.prototype.colors = function (){
-    switch (this){
-      case player.black : return 'rgba(0, 0, 0, 1)';
-      case player.white : return 'rgba(256, 256, 256, 1)';
-      case player.empty : return 'rgba(0, 0, 0, 0)';
-    }
-  }
-}
-//------------------------------------------------------------------------------
-//プレイヤー定義 : インスタンス化 (ここの理屈がよくわからない)
-//------------------------------------------------------------------------------
-player = {
-  black : new player(),
-  white : new player(),
-  empty : new player(),
-};
-
-
-//------------------------------------------------------------------------------
-//いろいろとぐちゃぐちゃする
-//------------------------------------------------------------------------------
 (function (global) {
-  //------------------------------------------------------------------------------
-  //クラス
-  //------------------------------------------------------------------------------
-  function logic(){}
-  //------------------------------------------------------------------------------
-  //ヘッダー
-  //------------------------------------------------------------------------------
-  global.logic = logic;
-  global.logic.copyObj = copyObj;
-  global.logic.canPut = canPut;
-  global.logic.getCordinate = getCordinate;
-  global.logic.initGame = initGame;
-  global.logic.click = click;
+  //Class Define
+  function boardClass(){
+    let _array = [];
+    let _player;
+    let _revision;
+    let _boardStart;
+    let _boardEnd;
+    let _cellN;
+    let _cellSize;
+    let _evented = false;
 
-  //------------------------------------------------------------------------------
-  //変数定義
-  //------------------------------------------------------------------------------
-  var ctx = document.getElementById("canv").getContext('2d');       //ctx = カンバスをさすようにするお
-  var canvasRect = canv.getBoundingClientRect();                    //カンバスが表示される位置を取得するお
-  //----------------------------------------------------------------------------
-  //座標ゲット関数
-  //----------------------------------------------------------------------------
-  function getCordinate(e){
-    var x = Math.floor((e.clientX - canvasRect.left)/(500/8));
-    var y = Math.floor((e.clientY - canvasRect.top)/(500/8));
-    if(canPut(board,x,y) == true){
-      board.array[y][x] = board.player;
-      board = flip(board,x,y);
-      board.player == 1 ? board.player = -1 : board.player = 1;
-      Render.render(board,player,ctx)
-    }
-  }
-  //----------------------------------------------------------------------------
-  //置ける場所かどうかチェック
-  //----------------------------------------------------------------------------
-  function canPut(_board,_x,_y){
-    //----------------------------------------------------------------------------
-    //変数定義
-    //----------------------------------------------------------------------------
-    var board = _board;
-    var x = _x;
-    var y = _y;
-    var flag1 = false;
-    var flag2 = false;
-    var x_search = 0;
-    var y_search = 0;
-    //----------------------------------------------------------------------------
-    //まず、置く場所が空きマスかどうか
-    //----------------------------------------------------------------------------
-    if (board.array[y][x] != 0){return false;}                                          //もしも、置こうとしていたところに石が置いてあったら、falseを返す
-     //----------------------------------------------------------------------------
-    //となりのマスに相手の石があるかどうか
-    //----------------------------------------------------------------------------
-    for (var cntY = -1; cntY < 2; cntY++){
-      for (var cntX = -1; cntX < 2; cntX++){
-        if ((y+cntY) < 0 || (y+cntY) > 7 || (x+cntX) < 0 ||  (x+cntX) > 7){continue;} //盤外はチェックせずにスキップ
-        if (cntX == 0 && cntY == 0){continue;}                                        //自分が置いたマスのチェックはスキップ
-        if (board.array[y+cntY][x+cntX] == (-board.player)){                          //もし、隣のマスに相手の石があったらその先に自分の石があるか調べる
-          //----------------------------------------------------------------------------
-          //その先に空白なしで自分の石があるかどうか？
-          //----------------------------------------------------------------------------
-          x_search = x+cntX+cntX;                                                               //相手の石があった隣マスの一つ向こう側のマスを指す
-          y_search = y+cntY+cntY;
-          L : while((y_search) <= 7 && (y_search) >= 0 && (x_search) <= 7 && (x_search) >= 0){　//盤外に出た時にループを抜けるようにしておく
-            switch (board.array[y_search][x_search]) {　　　　　　　　　　　　　　　　　　　　　　　　  //条件分岐
-              case board.player :                                                               //もし自分の石がおいてあったら、Trueを返す
-                  return true;
-              case -board.player :                                                              //もし相手の石があったら（続いていたら)その向こうのますを見にいく
-                  x_search = x_search + cntX;
-                  y_search = y_search + cntY;
-                  break ;
-              case 0 :                                                                          //もし空きマスがあれば、"空白なしで自分の(ry)"ループを抜ける
-                  break L;
-            }
-          }
-          //----------------------------------------------------------------------------
+    //setter
+    boardClass.prototype.setArray = function (value,x,y){ _array[x][y] = value;}
+    boardClass.prototype.setPlayer = function (player){ _player = player;}
+    boardClass.prototype.setRevision = function (revision){ _revision = revision;}
+
+    //getter
+    boardClass.prototype.getArray = function (x,y){return _array[x][y];}
+    boardClass.prototype.getPlayer = function (){ return _player;}
+    boardClass.prototype.getRevision = function (){ return _revision;}
+    boardClass.prototype.getStart = function (){ return _boardStart;}
+    boardClass.prototype.getEnd = function (){ return _End;}
+    boardClass.prototype.getCellN = function (){ return _cellN;}
+    boardClass.prototype.getCellSize = function (){ return _cellSize;}
+    boardClass.prototype.getEvented = function (){ return _evented;}
+
+    //初期化er
+    boardClass.prototype.init = function (start,end,cellN){
+      _evented = true;
+      _player = 1;
+      _revision = 0;
+      _boardStart = start;
+      _boardEnd = end;
+      _cellN = cellN;
+      _cellSize = end / cellN;
+
+       for(var x = 0; x < cellN; x++){
+         _array[x] = new Array(cellN);
+        for(var y = 0; y < cellN; y++){
+          _array[x][y] = 0;
         }
       }
     }
-    return false;
   }
-  //----------------------------------------------------------------------------
-  //黒と白の石を数える関数
-  //----------------------------------------------------------------------------
-  function countStone(){
-  }
-  //----------------------------------------------------------------------------
-  //ひっくり返す
-  //----------------------------------------------------------------------------
-  function flip(_board,_x,_y){
-    var x = _x;
-    var y = _y;
-    var board_cache1 = copyObj(_board);
-    var board_cache2 = copyObj(_board);
-    var x_search = 0;
-    var y_search = 0;
-    //----------------------------------------------------------------------------
-   //となりのマスに相手の石があるかどうか
-   //----------------------------------------------------------------------------
-   for (var cntY = -1; cntY < 2; cntY++){
-     for (var cntX = -1; cntX < 2; cntX++){
-       if ((y+cntY) < 0 || (y+cntY) > 7 || (x+cntX) < 0 ||  (x+cntX) > 7){continue;} //盤外はチェックせずにスキップ
-       if (cntX == 0 && cntY == 0){continue;}                                        //自分が置いたマスのチェックはスキップ
-       if (board.array[y+cntY][x+cntX] == (-board.player)){                          //もし、隣のマスに相手の石があったらループイン
-         //----------------------------------------------------------------------------
-         //裏返していいものかどうか
-         //----------------------------------------------------------------------------
-         x_search = x+cntX;                                                               //相手の石があった隣マスを指す
-         y_search = y+cntY;
-         L : while((y_search) <= 7 && (y_search) >= 0 && (x_search) <= 7 && (x_search) >= 0){　//盤外に出た時にループを抜けるようにしておく
-           switch (board.array[y_search][x_search]) {　　　　　　　　　　　　　　　　　　　　　　　　  //条件分岐
-             case board.player :                                                               //もし自分の石がおいてあったら、boardをboard_cacheで上書き
-                                board_cache1 = copyObj(board_cache2);
-                                break L;
-             case -board.player :                                                              //もし相手の石があったら（続いていたら)その向こうのますを見にく
-                                board_cache2.array[y_search][x_search] = board_cache1.player;
-                                x_search = x_search + cntX;
-                                y_search = y_search + cntY;
-                 break ;
-             case 0 :                                                                          //もし空きマスがあれば、"空白なしで自分の(ry)"ループを抜ける
-                board_cache2 = copyObj(board_cache1);
-                 break L;
-           }
-         }
-         //----------------------------------------------------------------------------
-       }
-     }
-   }
-   return board_cache1;
-  }
-  //------------------------------------------------------------------------------
-  // イベント定義
-  //------------------------------------------------------------------------------
-  function click(_ctx){
-    canv.addEventListener('click',logic.getCordinate,true);
-  }
-  //----------------------------------------------------------------------------
-  //オブジェクトをコピーする
-  //----------------------------------------------------------------------------
-  function copyObj(obj) {
-    return JSON.parse(JSON.stringify(obj));
-}
-//----------------------------------------------------------------------------
-//ゲームを開始する
-//----------------------------------------------------------------------------
-function initGame(_ctx) {
-  var ctx = _ctx;
-  var board = copyObj(board_config)
-  global.board = board;
-  // Render.render(board,player,ctx);
-  // logic.click(ctx);
-}
-
-//------------------------------------------------------------------------------
+  // header
+  global.boardClass = boardClass;
 })((this || 0).self || global);
-
-//------------------------------------------------------------------------------
-//動作確認するときはここに描こう
-//------------------------------------------------------------------------------
-var ctx = document.getElementById("canv").getContext('2d');       //ctx = カンバスをさすようにするお
-logic.initGame(ctx);
-Render.render(ctx,board,player);
