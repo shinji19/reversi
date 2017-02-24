@@ -1,6 +1,6 @@
 (function (global) {
   //Class Define
-  function boardClass(){
+  function Board(){
     let _array = [];
     let _player;
     let _revision;
@@ -11,22 +11,22 @@
     let _evented = false;
 
     //setter
-    boardClass.prototype.setArray = function (value,x,y){ _array[x][y] = value;}
-    boardClass.prototype.setPlayer = function (player){ _player = player;}
-    boardClass.prototype.setRevision = function (revision){ _revision = revision;}
+    Board.prototype.setArray = function (value,x,y){ _array[x][y] = value;}
+    Board.prototype.setPlayer = function (player){ _player = player;}
+    Board.prototype.setRevision = function (revision){ _revision = revision;}
 
     //getter
-    boardClass.prototype.getArray = function (x,y){return _array[x][y];}
-    boardClass.prototype.getPlayer = function (){ return _player;}
-    boardClass.prototype.getRevision = function (){ return _revision;}
-    boardClass.prototype.getStart = function (){ return _boardStart;}
-    boardClass.prototype.getEnd = function (){ return _End;}
-    boardClass.prototype.getCellN = function (){ return _cellN;}
-    boardClass.prototype.getCellSize = function (){ return _cellSize;}
-    boardClass.prototype.getEvented = function (){ return _evented;}
+    Board.prototype.getArray = function (x,y){return _array[x][y];}
+    Board.prototype.getPlayer = function (){ return _player;}
+    Board.prototype.getRevision = function (){ return _revision;}
+    Board.prototype.getStart = function (){ return _boardStart;}
+    Board.prototype.getEnd = function (){ return _End;}
+    Board.prototype.getCellN = function (){ return _cellN;}
+    Board.prototype.getCellSize = function (){ return _cellSize;}
+    Board.prototype.getEvented = function (){ return _evented;}
 
     //初期化er
-    boardClass.prototype.init = function (start,end,cellN){
+    Board.prototype.init = function (start,end,cellN){
       _evented = true;
       _player = 1;
       _revision = 0;
@@ -44,5 +44,5 @@
     }
   }
   // header
-  global.boardClass = boardClass;
+  global.Board = Board;
 })((this || 0).self || global);
